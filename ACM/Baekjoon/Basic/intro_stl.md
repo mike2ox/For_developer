@@ -79,5 +79,34 @@
     cout << f
 ```
 #### map
-- (key, value) 로 구성된 컨테이너
-- 
+- (key, value) 로 구성된 컨테이너(파이썬의 dictionary)
+- key를 트리에서 찾아야 함(O(logN))
+  ex) map 생성
+```cpp
+    // pair처럼 접근가능
+    map<int, int> d = {{1,2},{3,4},{5,6}}
+```
+
+#### stack
+- deque를 기본 구조로 해서 만들어짐
+- list형식을 원한다면 ```stack<int, list<int>> li```식으로 작성하면 됨
+- emplace를 사용해서 아이템을 추가할 수 있음.
+
+#### prioity queue
+- queue에서도 우선순위가 높은 순으로 출력되도록 함(MaxHeap)
+- MinHeap으로 하고 싶으면 vector로 push할때 해당 값에 '-' 등호를 붙여서 추가
+
+#### bitset
+- ```vector<bool>``` 형식과 유사
+- bit의 크기를 정해줘야함
+  ex) bitset 생성
+```cpp
+    bitset<8> b1(13);   // 00001011
+    bitset<8> b3("10111");  // 00010111
+
+    cout << b1.test(3); // b1[3]을 출력
+    b1.set(3); // b1[0]을 1로 바꿔줌
+    b1.reset(3); 
+    b1.flip(4); //b1[4]의 값을 뒤집어줌
+```
+
