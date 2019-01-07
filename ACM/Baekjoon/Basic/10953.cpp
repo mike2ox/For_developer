@@ -1,6 +1,6 @@
 /*
 *	author : mike2ox
-*	BOJ : 10952
+*	BOJ : 10953
 *	descript : https://www.acmicpc.net/problem/
 *	type : I/O
 */
