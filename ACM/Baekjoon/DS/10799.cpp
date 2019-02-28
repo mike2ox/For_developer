@@ -5,39 +5,39 @@
 *	type : DS
 */
 #include<iostream>
-#include<vector>
+#include<string>
+#include<stack>
 using namespace std;
 
-int T;
-char v[50] = { NULL, };
+string pipe;
+stack<char> stck;
 
 int main() {
-	ios_base::sync_with_stdio("false");
 
-	cin >> T;
+	// cin, cout 속도 향상
+	ios_base::sync_with_stdio(false);
+	cin >> pipe;
 
-	while (T--) {
-		int open = 0;
-		cin >> v;
-		for (int i = 0; i < 50; i++) {
-			if (v[i] == '(')
-				open++;
-			else if (v[i] == ')')
-				open--;
+	int count = 0;
+
+	for (int i = 0; i < pipe.length(); i++) {
+		if (pipe[i] == '(')
+			stck.push(pipe[i]);
+		else {
+			stck.pop();
+
+			if (pipe[i - 1] == '(') //레이저일 경우
+				count += stck.size();    //잘려나갈시 생기는 파이프 수
+
 			else
-				break;
-			//NOTE : 필수 조건
-			if (open < 0)
-				break;
+				count++;    //파이프 1개가 끝나므로 1개 추가
 		}
-		if (open == 0)
-			cout << "YES" << '\n';
-		else
-			cout << "NO" << '\n';
-		for (int j = 0; j < 50; j++)
-			v[j] = NULL;
 	}
 
-	system("pause");
+	cout << count << '\n';
 	return 0;
 }
+
+/*
+	레이저 부분 주의, stack에서 주요 기능만 구현해 볼 것.
+*/
