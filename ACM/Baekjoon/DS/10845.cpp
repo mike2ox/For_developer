@@ -9,10 +9,10 @@
 #include<string>
 using namespace std;
 
-int N;      //명령 수
-string command; //명령
+int N;				//명령 수
+string command;		//명령
 int value;
-int que[10001];		//큐 구현
+int que[10001];			//큐 구현
 int head, tail;			// 큐에서 head와 tail
 
 void pushX(int _x) {
@@ -28,7 +28,6 @@ void pushX(int _x) {
 	}
 
 	que[head] = _x;
-
 }
 int pop() {
 
@@ -79,6 +78,7 @@ void back() {
 
 int main() {
 	ios_base::sync_with_stdio(false);
+
 	cin >> N;
 	head = tail = 0;		//init
 
