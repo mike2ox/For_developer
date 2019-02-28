@@ -78,6 +78,8 @@ int main() {
 		}
 	}
 
-	system("pause");
 	return 0;
 }
+/*
+	vector대신 구조체로 만들어 볼것
+*/
