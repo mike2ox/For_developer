@@ -19,6 +19,7 @@ int main() {
 	while (T--) {
 		int open = 0;
 		cin >> v;
+
 		for (int i = 0; i < 50; i++) {
 			if (v[i] == '(')
 				open++;
@@ -38,6 +39,8 @@ int main() {
 			v[j] = NULL;
 	}
 
-	system("pause");
 	return 0;
 }
+/*
+	() ½ÖÀ¸·Î µÊÀ» À¯ÀÇ
+*/
