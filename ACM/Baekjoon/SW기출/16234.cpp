@@ -14,6 +14,8 @@ struct xy {
 };
 
 int map[50][50];
+int visited[50][50] = { 0, };
+
 int n;
 //인구수 경계
 int l, r;
@@ -24,11 +26,7 @@ const int dy[] = { -1,1,0,0 };
 const int dx[] = { 0,0,-1,1 };
 
 void go(int _y, int _x, int status[][50], int idx, int& cnt, int &sum) {
-	int visited[50][50] = { 0, };
-
-	const int dy[] = { 0, 0, -1, +1 };
-	const int dx[] = { -1, +1, 0, 0 };
-
+	
 	queue<xy> q;
 	xy head;
 	head.y = _y; head.x = _x;
@@ -51,7 +49,7 @@ void go(int _y, int _x, int status[][50], int idx, int& cnt, int &sum) {
 			if (next.y < 0 || next.y >= n || next.x < 0 || next.x >= n) {
 				continue;
 			}
-
+			// 거리 계산
 			int delta = abs(map[cur.y][cur.x] - map[next.y][next.x]);
 			if (visited[next.y][next.x] == 0 && l <= delta && delta <= r) {
 				visited[next.y][next.x] = 1;
