@@ -9,9 +9,12 @@
 #include<queue>
 using namespace std;
 
-int map[51][51];
-int ck[51][51];
-int n, y, x;
+struct xy {
+	int y, x;
+};
+
+int map[50][50];
+int n;
 //인구수 경계
 int l, r;
 int cnt = 0;//인구이동
@@ -20,11 +23,41 @@ int cnt = 0;//인구이동
 const int dy[] = { -1,1,0,0 };
 const int dx[] = { 0,0,-1,1 };
 
-void go() {
-	int n_area;
+void go(int _y, int _x, int status[][50], int idx, int& cnt, int &sum) {
+	int visited[50][50] = { 0, };
 
-	for (int i = 0; i < 4; ++i) {
-		//int ny = 
+	const int dy[] = { 0, 0, -1, +1 };
+	const int dx[] = { -1, +1, 0, 0 };
+
+	queue<xy> q;
+	xy head;
+	head.y = _y; head.x = _x;
+	visited[_y][_x] = 1;
+
+	q.push(head);
+
+	while (!q.empty()) {
+		xy cur = q.front();   q.pop();
+
+		status[cur.y][cur.x] = idx;
+		++cnt;
+		sum += map[cur.y][cur.x];
+
+		for (int dir = 0; dir < 4; ++dir) {
+			xy next;
+			next.y = cur.y + dy[dir];
+			next.x = cur.x + dx[dir];
+
+			if (next.y < 0 || next.y >= n || next.x < 0 || next.x >= n) {
+				continue;
+			}
+
+			int delta = abs(map[cur.y][cur.x] - map[next.y][next.x]);
+			if (visited[next.y][next.x] == 0 && l <= delta && delta <= r) {
+				visited[next.y][next.x] = 1;
+				q.push(next);
+			}
+		}
 	}
 
 }
@@ -42,7 +75,44 @@ int main() {
 		}
 	}
 
-	go();
+	int ret = 0;
+	bool update = true;
+
+	while (update) {
+		update = false;
+
+		//맵에서 상태 확인용
+		int status[50][50] = { 0, };
+		int a_idx = 0;	//특정 영역 index
+		int count[2501] = { 0, };	//갯수
+		int sum[2501] = { 0, };		//합산
+
+		for (int y = 0; y < n; ++y) {
+			for (int x = 0; x < n; ++x) {
+				//
+				if (status[y][x] == 0) {
+					++a_idx;
+					go(y, x, status, a_idx, count[a_idx], sum[a_idx]);
+				}
+			}
+		}
+
+		for (int y = 0; y < n; ++y) {
+			for (int x = 0; x < n; ++x) {
+				int  index = status[y][x];
+				int avg = sum[index] / count[index];
+				if (map[y][x] != avg) {
+					map[y][x] = avg;
+					update = true;
+				}
+			}
+		}
+		if (update) {
+			++ret;
+		}
+	}
+
+	cout << ret << '\n';
 
 	return 0;
 }
