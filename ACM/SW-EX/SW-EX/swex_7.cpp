@@ -2,7 +2,7 @@
 *	author : mike2ox
 *	swex : 무선 충전
 *	descript : https://www.swexpertacademy.com/main/learn/course/lectureProblemViewer.do
-*	type : 시뮤ㄹ레이션
+*	type : 시뮬레이션
 */
 #include<iostream>
 #include<vector>
@@ -13,7 +13,7 @@ using namespace std;
 bool desc(pair<int, int> a, pair<int, int> b) {
 	return a > b;
 }
-
+// 
 typedef struct AP {
 	int x, y, c, p;
 };
@@ -156,3 +156,21 @@ int main(){
 	}
 	return 0;
 }
+/*
+BC의 정보와 사용자의 이동 궤적이 주어졌을 때, 모든 사용자가 충전한 양의 합의 최댓값?
+
+매초마다 특정 BC의 충전 범위에 안에 들어오면 해당 BC에 접속이 가능하다. 
+따라서 T=5에 사용자 A는 BC 3에, 사용자 B는 BC 2에 접속할 수 있다. 
+이때, 접속한 BC의 성능(P)만큼 배터리를 충전 할 수 있다. 
+만약 한 BC에 두 명의 사용자가 접속한 경우, 접속한 사용자의 수만큼 충전 양을 균등하게 분배한다
+
+1. 지도의 가로, 세로 크기는 10이다.
+2. 사용자는 총 2명이며, 사용자A는 지도의 (1, 1) 지점에서, 사용자B는 지도의 (10, 10) 지점에서 출발한다.
+3. 총 이동 시간 M은 20이상 100이하의 정수이다. (20 ≤ M ≤ 100)
+4. BC의 개수 A는 1이상 8이하의 정수이다. (1 ≤ A ≤ 8)
+5. BC의 충전 범위 C는 1이상 4이하의 정수이다. (1 ≤ C ≤ 4)
+6. BC의 성능 P는 10이상 500이하의 짝수이다. (10 ≤ P ≤ 500)
+7. 사용자의 초기 위치(0초)부터 충전을 할 수 있다.
+8. 같은 위치에 2개 이상의 BC가 설치된 경우는 없다. 그러나 사용자A, B가 동시에 같은 위치로 이동할 수는 있다. 사용자가 지도 밖으로 이동하는 경우는 없다
+
+*/
