@@ -113,10 +113,15 @@ int run(int x, int y, int dir) {
 			}
 			else {
 				if (d == 0) odir = 1;
+<<<<<<< HEAD
 				else if (d == 1) 
 					odir = 0;
 				else if (d == 2)
 					odir = 3;
+=======
+				else if (d == 1) odir = 0;
+				else if (d == 2) odir = 3;
+>>>>>>> fb4be88b13aebbde2a88de90b271b7d8d7904a04
 				else odir = 2;
 			}
 
