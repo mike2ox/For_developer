@@ -21,8 +21,8 @@ const int dx[] = { 1,-1,0,0 };
 // --> 문제 잘못 읽음...dfs로 해결 가능
 
 int go(int ty, int tx, int n_block) {
-	
-	if (n_block==4) {
+
+	if (n_block == 4) {
 		return mino[ty][tx];
 	}
 
@@ -33,9 +33,9 @@ int go(int ty, int tx, int n_block) {
 		int nx = tx + dx[i];
 
 		//현 위치가 범위 밖일 경우 + 방문 유무
-		if (ny>=1&&ny<=n&&nx>=1&&nx<=n&&!visit[ny][nx]) {
+		if (ny >= 1 && ny <= n && nx >= 1 && nx <= m && !visit[ny][nx]) {
 			visit[ny][nx] = true;
-			sum = max(sum, mino[ty][tx]+go(ny, nx, n_block + 1));
+			sum = max(sum, mino[ty][tx] + go(ny, nx, n_block + 1));
 			visit[ny][nx] = false;
 		}
 	}
@@ -47,11 +47,11 @@ int go2(int ty, int tx) {
 	int result = 0;
 
 	//ㅗ (현재 좌표 ㅡ의 가운데)
-	if (ty > 1 && ty<=n && tx > 1 && tx < m)
+	if (ty > 1 && ty <= n && tx > 1 && tx < m)
 		result = max(result, mino[ty][tx - 1] + mino[ty][tx] + mino[ty - 1][tx] + mino[ty][tx + 1]);
 
 	//ㅏ (현재 좌표 ㅣ의 가운데)
-	if (ty > 1 && ty < n && tx < m && tx>=1)
+	if (ty > 1 && ty < n && tx < m && tx >= 1)
 		result = max(result, mino[ty - 1][tx] + mino[ty][tx] + mino[ty][tx + 1] + mino[ty + 1][tx]);
 
 	//ㅜ (현재 좌표 ㅡ의 가운데)
@@ -71,15 +71,15 @@ int main() {
 
 	cin >> n >> m;
 
-	for (int i = 1; i<= n; ++i)
-		for (int j= 1; j <= m; ++j)
+	for (int i = 1; i <= n; ++i)
+		for (int j = 1; j <= m; ++j)
 			cin >> mino[i][j];
 
 	int result = 0;
 	for (int i = 1; i <= n; ++i) {
 		for (int j = 1; j <= m; ++j) {
 			visit[i][j] = true;
-			result = max(result, go(i, j, 0));
+			result = max(result, go(i, j, 1));
 			result = max(result, go2(i, j));
 			visit[i][j] = false;
 		}
@@ -93,7 +93,7 @@ int main() {
 /*
 첫째 줄에 종이의 세로 크기 N과 가로 크기 M이 주어진다. (4 ≤ N, M ≤ 500)
 
-둘째 줄부터 N개의 줄에 종이에 쓰여 있는 수가 주어진다. 
+둘째 줄부터 N개의 줄에 종이에 쓰여 있는 수가 주어진다.
 i번째 줄의 j번째 수는 위에서부터 i번째 칸, 왼쪽에서부터 j번째 칸에 쓰여 있는 수이다.
 입력으로 주어지는 수는 1,000을 넘지 않는 자연수이다.
 
