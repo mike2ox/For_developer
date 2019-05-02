@@ -69,7 +69,7 @@ void bfs() {
 	q.push(make_pair(r, c));	//¸ÇÈ¦ ¶Ñ²±
 	visit[r][c] = true;
 	cnt++;
-	printall();
+	//printall();
 	while (--l) {
 		int q_s = q.size();
 		//escape++;
@@ -83,7 +83,7 @@ void bfs() {
 				int nx = tx + dx[d];
 
 				//¹Û
-				if (ny < 0 || ny > m || nx < 0 || nx > n || visit[ny][nx])
+				if (ny < 0 || ny >=n || nx < 0 || nx >=m || visit[ny][nx])
 					continue;
 
 				//¿¬°áµÇ¸é
@@ -97,7 +97,7 @@ void bfs() {
 			q.pop();
 		}
 
-		printall();
+		//printall();
 	}
 }
 void init() {
@@ -121,20 +121,20 @@ int main() {
 	for (int i = 1; i <= tc; i++) {
 		cin >> n >> m >> r >> c >> l;
 		
-		//NOTE: ÀÔ·Â¿¡¼­ tc 5¹ø ¾ÈµÊ
+
 		for (int j = 0; j < n; ++j) {
 			for (int k = 0; k < m; ++k){
 				cin >> map[j][k];
 			}
 		}	
 
-		printall();
+		//printall();
 		bfs();
 		cout << '#' << i << " " << cnt << '\n';
 
 		init();
 	}
-	system("pause");
+	//system("pause");
 	return 0;
 }
 /*
