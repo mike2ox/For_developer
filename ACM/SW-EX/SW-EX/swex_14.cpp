@@ -63,6 +63,9 @@ bool check(int _y, int _x, int _ny, int _nx, int _d) {
 void bfs() {
 
 	queue<pair<int, int>> q;
+	//무조건 1개는 있어야함
+	if (map[r][c] == 0)
+		return;
 	q.push(make_pair(r, c));	//맨홀 뚜껑
 	visit[r][c] = true;
 	cnt++;
@@ -79,13 +82,18 @@ void bfs() {
 				int ny = ty + dy[d];
 				int nx = tx + dx[d];
 
+				//밖
+				if (ny < 0 || ny > m || nx < 0 || nx > n || visit[ny][nx])
+					continue;
+
 				//연결되면
-				if (check(ty, tx, ny, nx, d) && !visit[ny][nx]) {
+				if (check(ty, tx, ny, nx, d) ) {
 					q.push(make_pair(ny, nx));
 					visit[ny][nx] = true;
 					cnt++;
 				}
 			}
+
 			q.pop();
 		}
 
@@ -94,9 +102,13 @@ void bfs() {
 }
 void init() {
 	cnt = 0;
-	for (int j = 0; j < n; ++j)
-		for (int k = 0; k < m; ++k)
-			map[j][k]=0;
+	for (int j = 0; j < n; ++j) {
+		for (int k = 0; k < m; ++k) {
+			visit[j][k] = false;//중요!!!
+			map[j][k] = 0;
+		}
+	}
+
 }
 
 int main() {
@@ -110,15 +122,16 @@ int main() {
 		cin >> n >> m >> r >> c >> l;
 		
 		//NOTE: 입력에서 tc 5번 안됨
-		for (int j = 0; j < n; ++j){
-			for (int k = 0; k < m; ++k) 
+		for (int j = 0; j < n; ++j) {
+			for (int k = 0; k < m; ++k){
 				cin >> map[j][k];
-		}
-				
+			}
+		}	
 
 		printall();
 		bfs();
 		cout << '#' << i << " " << cnt << '\n';
+
 		init();
 	}
 	system("pause");
@@ -128,4 +141,8 @@ int main() {
 지하 터널 지도와 맨홀 뚜껑의 위치, 경과된 시간이 주어질 때 탈주범이 위치할 수 있는 장소의 개수를 계산
 
 숫자 1 ~ 7은 해당 위치의 터널 구조물 타입을 의미하며 숫자 0 은 터널이 없는 장소를 의미한다.
+
+탈출 후 소요된 시간 L은 1 이상 20 이하이다. (1 ≤ L ≤ 20)
+지하 터널 지도에는 반드시 1개 이상의 터널이 있음이 보장된다.
+맨홀 뚜껑은 항상 터널이 있는 위치에 존재한다.
 */
