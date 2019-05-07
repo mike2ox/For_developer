@@ -1,6 +1,6 @@
-/*
+ï»¿/*
 *	author : mike2ox
-*	BOJ : Åä¸¶Åä
+*	BOJ : í† ë§ˆí† 
 *	descript : https://www.acmicpc.net/problem/7576
 *	type : bfs
 */
@@ -8,7 +8,7 @@
 #include<queue>
 using namespace std;
 
-int n, m,ret;
+int n, m, ret;
 int map[1001][1001];
 queue< pair<int, int>> q;
 const int dy[] = { 0,0,-1,1 };
@@ -31,7 +31,7 @@ int bfs() {
 	while (!q.empty()) {
 		int ty = q.front().first;
 		int tx = q.front().second;
-		
+
 		if (!q_s) {
 			//printall();
 			cycle++;
@@ -44,8 +44,8 @@ int bfs() {
 		for (int i = 0; i < 4; ++i) {
 			int ny = ty + dy[i];
 			int nx = tx + dx[i];
-			//°æ°è¹Û + º®ÀÏ¶§
-			if (ny<0 || ny>=m || nx<0 || nx>=n || map[ny][nx]==-1)
+			// ë²”ìœ„ ì„¤ì • + ë²½
+			if (ny < 0 || ny >= m || nx < 0 || nx >= n || map[ny][nx] == -1)
 				continue;
 			// 
 			if (map[ny][nx] == 0) {
@@ -56,8 +56,8 @@ int bfs() {
 
 		q_s--;
 	}
-	
-	return cycle-1;
+
+	return cycle - 1;
 }
 bool check() {
 	for (int i = 0; i < m; ++i) {
@@ -82,7 +82,7 @@ int main() {
 				q.push(make_pair(i, j));
 		}
 	}
-	
+
 	ret = bfs();
 
 	if (check())
