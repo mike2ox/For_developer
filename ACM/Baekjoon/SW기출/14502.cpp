@@ -2,128 +2,128 @@
 *	author : mike2ox
 *	BOJ : 14502
 *	descript : https://www.acmicpc.net/problem/14502
-*	type : 삼성기출 : DFS + 시뮬레이션
-*/
-#include<iostream>
-#include<queue>
+*	type : BFS + DFS
+*/#include<iostream>
 #include<algorithm>
-#include<string>
+#include<queue>
 using namespace std;
 
-int dx[] = {0,0,-1,1};
-int dy[] = {-1,1,0,0};
-int map[8][8];
 int n, m;
-int ret;
+int ret = -1;
+int w;
+int map[8][8];
+int copymap[8][8];
+bool visit[8][8];
 
+const int dy[] = { 0,0,-1,1 };
+const int dx[] = { 1,-1,0,0 };
 
-void bfs() {
-	queue<int> que;
-	int ck[8][8] = { 0, };
-	int copy_map[8][8];
-	int safe=0;
-	
-	// 방문확인
-	for (int y = 0; y < n; ++y) {
-		for (int x = 0; x < m; ++x) {
+queue<pair<int, int>> q;
+int ckpt() {
+	int cnt = 0;
 
-			copy_map[y][x] = map[y][x];
-			
-			if (copy_map[y][x] == 2) {
-				// int하나에 x, y 다 표현하기 위해
-				// TODO : pair 써도 됨
-				que.push(y * 10 + x);
-				ck[y][x] = 1;
-			}
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (copymap[i][j] == 0)
+				cnt++;
 		}
 	}
-
-	//bfs 종료조건
-	while (!que.empty()) {
-		int cur = que.front();
-		que.pop();
-
-		int cur_x = cur % 10;
-		int cur_y = cur / 10;
-
-		copy_map[cur_y][cur_x] = 2;
-
-		for (int dir = 0; dir < 4; ++dir) {
-			int nx = cur_x + dx[dir];
-			int ny = cur_y + dy[dir];
-
-			// 경계 밖
-			if (ny < 0 || nx < 0 || ny >= n || nx >= m)
-				continue;
-			
-			// 빈칸이고 방문 안했을 경우
-			if (ck[ny][nx] == 0 && copy_map[ny][nx] == 0) {
-				ck[ny][nx] = 1;
-				que.push(ny * 10 + nx);
-			}
-		}
-	}
-
-
-	for (int y = 0; y < n; ++y) {
-		for (int x = 0; x < m; ++x) {
-			if (copy_map[y][x] == 0)
-				++safe;
-		}
-	}
-
-	if (ret < safe)
-		ret = safe;
-
+	return cnt;
 }
-
-
-void dfs(int cnt, int t_y, int t_x) {
-	if (cnt == 3) {
-		//검색
-		bfs();
-		return;
-	}
-
-	for (int y = t_y; y < n; ++y) {
-		for (int x = t_x; x < m; ++x) {
-			// 빈칸일 경우
-			if (map[y][x] == 0) {
-				map[y][x] = 1;
-				dfs(cnt + 1, y, x);
-				map[y][x] = 0;
-			}
+void printall() {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cout << copymap[i][j] << " ";
 		}
-		// 초기화
-		t_x = 0;
+		cout << '\n';
 	}
 }
+int bfs() {
 
+	//copy
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			copymap[i][j] = map[i][j];
+			visit[i][j] = false;
+			if (map[i][j] == 2) {
+				q.push({ i,j });
+				visit[i][j] = true;
+			}
+		}
+	}
+
+	while (!q.empty()) {
+		int cy = q.front().first;
+		int cx = q.front().second;
+
+		q.pop();
+
+		for (int i = 0; i < 4; ++i) {
+			int ny = cy + dy[i];
+			int nx = cx + dx[i];
+
+			if (ny < 0 || nx < 0 || ny >= n || nx >= m) continue;
+
+			if (copymap[ny][nx] == 0 && !visit[ny][nx]) {
+				copymap[ny][nx] = 2;
+				visit[ny][nx] = true;
+				q.push({ ny, nx });
+			}
+		}
+
+	}
+	//printall();
+	return ckpt();
+}
+
+// 0,1,2 : 빈칸, 벽, 바이러스
 int main() {
-
 	ios_base::sync_with_stdio(false);
+	cin.tie(0);
 
 	cin >> n >> m;
 
-	for (int y = 0; y < n; ++y) {
-		for (int x = 0; x < m; ++x) {
-			cin >> map[y][x];
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < m; j++) {
+			cin >> map[i][j];
 		}
 	}
 
-	// count, 시작좌표
-	dfs(0,0,0);
 
+	for (int y1 = 0; y1 < n; y1++) {
+		for (int x1 = 0; x1 < m; x1++) {
+			for (int y2 = 0; y2 < n; y2++) {
+				for (int x2 = 0; x2 < m; x2++) {
+					for (int y3 = 0; y3 < n; y3++) {
+						for (int x3 = 0; x3 < m; x3++) {
+							if ((y1 == y2 && x1 == x2) || (y3 == y2 && x3 == x2) || (y1 == y3 && x1 == x3)) continue;
+							//if ((y1 == y2 == y3 && x1 == x2 == x3)) continue;
+							if (map[y1][x1] == 0 && map[y2][x2] == 0 && map[y3][x3] == 0) {
+								map[y1][x1] = 1;
+								map[y2][x2] = 1;
+								map[y3][x3] = 1;
+								ret = max(bfs(), ret);
+								map[y1][x1] = 0;
+								map[y2][x2] = 0;
+								map[y3][x3] = 0;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	//bfs();
+	//printall(n, m);
+	//cout << ckpt() << '\n';
 	cout << ret << '\n';
-
-	system("pause");
+	//0이 있는곳의 크기
 	return 0;
 }
 /*
-1. N*M
-2. 0, 1, 2 : 빈칸, 벽, 바이러스
-3. 인접빈칸으로 모두 확산
-4. 빈칸의 갯수는 3개 이상
-5. 벽은 꼭 3개를 세워야함
-6. 안전영역의 최대 크기 출력
+1. 벽을 세우지말고 바이러스가 확산된 상태 출력하도록 구현
+2. 벽을 세우는 방법 구현
+3. 1+2 결합 형태
 */
