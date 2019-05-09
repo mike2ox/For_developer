@@ -6,46 +6,39 @@
 */
 #include<iostream>
 #include<utility>
-#include<queue>
+#include<vector>
 using namespace std;
 
 int tc;
-bool pass;
+bool flag;
 char map[100][100];
 bool visit[100][100];
 
 const int dy[] = { 0,0,-1,1 };
 const int dx[] = { 1, -1,0,0 };
 
-bool bfs(pair<int, int> start) {
-
-	queue<pair<int, int>> q;
-	q.push(start);
-
-	while (!q.empty()) {
-		int cy = q.front().first;
-		int cx = q.front().second;
-		visit[cy][cx] = true;
-		q.pop();
-
-		for (int i = 0; i < 4; i++) {
-			int ny = cy + dy[i];
-			int nx = cx + dx[i];
-
-			if (nx < 0 || ny < 0 || nx >= 100 || ny >= 100) continue;
-			if (map[ny][nx] == '1')	continue;
-			if (visit[ny][nx])	continue;
-
-			if (map[ny][nx] == '3') return true;
-
-			visit[ny][nx] == true;
-			q.push({ ny, nx });
-
-		}
+void dfs(pair<int, int> p) {
+	if (map[p.first][p.second] == '3') {
+		flag = true;
+		return;
 	}
 
-	return false;
+	for (int i = 0; i < 4; ++i) {
+		int ny = p.first + dy[i];
+		int nx = p.second + dx[i];
+
+		//범위밖 //방문한 곳 //벽 pass
+		if (ny < 0 || nx < 0 || ny >= 100 || nx >= 100)	continue;
+		if (visit[ny][nx])	continue;
+		if (map[ny][nx] == '1')	continue;
+
+		visit[ny][nx] = true;
+		dfs({ ny, nx });
+		visit[ny][nx] = false;
+	}
 }
+
+
 int main() {
 
 	ios_base::sync_with_stdio(false);
@@ -53,22 +46,22 @@ int main() {
 
 	while (cin >> tc) {
 
-		pair<int, int> start, goal;
+		pair<int, int> start;
+		flag = false;
 
 		//입력 + 시작점 골인점 확인 + visit 초기화
 		for (int y = 0; y < 100; ++y) {
 			for (int x = 0; x < 100; ++x) {
 				cin >> map[y][x];
-				if (map[y][x] == '2') {
+				if (map[y][x] == '2')
 					start = make_pair(y, x);
-				}
-				else if (map[y][x] == '3')
-					goal = make_pair(y, x);
 				visit[y][x] = false;
 			}
 		}
+		visit[start.first][start.second] = true;
+		dfs(start);
 
-		if (bfs(start))
+		if (flag)
 			cout << "#" << tc << " " << 1 << '\n';
 		else
 			cout << "#" << tc << " " << 0 << '\n';
