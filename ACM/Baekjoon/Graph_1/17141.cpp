@@ -6,23 +6,24 @@
 */
 #include<iostream>
 #include<queue>
+#include<vector>
+#include<algorithm>
 using namespace std;
 
+int m, n;
+int min_t = 10000000;
 int map[50][50];
 int copymap[50][50];
 bool visit[50][50];
 
-queue<pair<int, int>> q;
+vector<pair<int, int>> v;	//바이러스 목록
 
-const int dy[] = { 0,0,-1,1 };
-const int dx[] = { 1,-1,0,0 };
-
-void printall(int n) {
+void printall() {
 
 	cout << '\n';
-	for (int y = 0; y < n; ++y) {
-		for (int x = 0; x < n; ++x) {
-			if(map[y][x]==1)
+	for (int y = 0; y < n; y++) {
+		for (int x = 0; x < n; x++) {
+			if (map[y][x] == 1)
 				cout << "-" << " ";
 			else
 				cout << copymap[y][x] << " ";
@@ -30,67 +31,117 @@ void printall(int n) {
 		cout << '\n';
 	}
 }
-void bfs(int n) {
-	int l_q = q.size();
-	int cnt = 1;
-	while (!q.empty()) {
-		int cy = q.front().first;
-		int cx = q.front().second;
-		if (!l_q) {
-			cnt++;
-			l_q = q.size();
+void init() {
+	for (int y = 0; y < n; ++y) {
+		for (int x = 0; x < n; ++x) {
+			if (map[y][x] == 2) {
+				copymap[y][x] = 0;
+				continue;
+			}
+			copymap[y][x] = map[y][x];
+			visit[y][x] = false;
 		}
-		q.pop();
-
-		for (int i = 0; i < 4; ++i) {
-			int ny = cy + dy[i];
-			int nx = cx + dx[i];
-
-			if (ny < 0 || nx < 0 || nx >= n || ny >= n)	continue;
-			if (visit[ny][nx])	continue;
-			if (copymap[ny][nx] == 1) continue;
-			copymap[ny][nx] = cnt;
-			visit[ny][nx] = true;
-			q.push({ ny, nx });
-		}
-
-		l_q--;
 	}
 }
+bool ck() {
+	for (int y = 0; y < n; ++y) {
+		for (int x = 0; x < n; ++x) {
+			if (copymap[y][x] != 0)	continue;
+			if (map[y][x] == 0 || map[y][x] == 2)
+				return true;
+		}
+	}
+	return false;
+}
+int bfs() {
+	queue<pair<int, int>> q;	//bfs용 바이러스
+
+	const int dy[] = { 0,0,-1,1 };
+	const int dx[] = { 1,-1,0,0 };
+
+	int ck_n = 1;
+
+	for (vector<pair<int, int>>::iterator itr = v.begin(); itr != v.end(); ++itr)
+		q.push(*itr);
+	//퍼지는 타이밍을 확인하기 위해
+	int q_s = q.size();
+
+	while (!q.empty()) {
+		if (q_s == 0) {
+			q_s = q.size();
+			ck_n++;
+		}
+		int cy = q.front().first;
+		int cx = q.front().second;
+
+		visit[cy][cx] = true;
+
+		q.pop();
+
+		q_s--;
+
+		for (int d = 0; d < 4; d++) {
+			int ny = cy + dy[d];
+			int nx = cx + dx[d];
+
+			if (nx < 0 || ny < 0 || ny >= n || nx >= n)	continue;
+			if (visit[ny][nx])	continue;
+			if (map[ny][nx] == 1)	continue;
+
+			q.push({ ny, nx });
+			copymap[ny][nx] = ck_n;
+		}
+	}
+
+	return ck_n;
+}
+//cnt = 뽑힌 바이러스 수
+void dfs(int cnt) {
+	if (cnt == 3) {
+		int ret = bfs();
+		//확산 안된 곳이 있다면
+		if (ck())
+			ret = -1;
+		else
+			min_t = min(ret, min_t);
+		printall();
+		init();
+		return;
+	}
+	for (int y = 0; y < n; ++y) {
+		for (int x = 0; x < n; ++x) {
+			if (map[y][x] == 2) {
+				v.push_back({ y,x });
+				visit[y][x] = true;
+				dfs(cnt + 1);
+				visit[y][x] = false;
+				v.pop_back();
+			}
+		}
+	}
+}
+
 int main() {
 
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 
-	int m, n;
 	cin >> n >> m;
 
 	for (int y = 0; y < n; ++y) {
 		for (int x = 0; x < n; ++x) {
 			cin >> map[y][x];
-			copymap[y][x] = map[y][x];
-			visit[y][x] = false;
 
-			if (map[y][x] == 2) {
-				q.push({ y, x });
-				visit[y][x] = true;
-				copymap[y][x] = 0;
-			}
 		}
 	}
-	bfs(n);
-	printall(n);
+
+	dfs(0);
+
+	if (min_t == 10000000)
+		cout << -1 << '\n';
+	else
+		cout << min_t << '\n';
+
 	return 0;
 }
-/*
-바이러스 확산 최소 시간
-바이러스 m개,  연구소 nxn
-빈칸 0, 벽1, 바이러스2
-
-접근
-1. 맵 입력 -> 출력 ok
-2. 그냥 BFS 탐색 -> 출력 되도록
-3. 갯수 지정해서 탐색 -> 출력되도록
-4. 최소값
-*/
 
