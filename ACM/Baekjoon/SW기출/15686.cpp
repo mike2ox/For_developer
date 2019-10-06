@@ -41,7 +41,7 @@ void bfs(queue<pair<int, int>>& chick) {
 			//치킨일 경우
 			if (map[ny][nx] == 2)
 				continue;
-
+			//집일 경우
 			if (map[ny][nx] == 1) {
 
 				result += dist;
@@ -63,7 +63,7 @@ void bfs(queue<pair<int, int>>& chick) {
 int main() {
 
 	ios_base::sync_with_stdio(false);
-	cin.tie(0); cout.tie(0);
+	cin.tie(0);
 
 	cin >> n >> m;
 
