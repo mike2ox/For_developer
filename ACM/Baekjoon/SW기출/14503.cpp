@@ -2,7 +2,7 @@
 using namespace std;
 
 int map[51][51];
-int cnt=0; // 로봇청소기가 청소하는 칸의 개수
+int cnt=0;		// 청소한 칸의 개수
 
 const int dx[] = { -1,0,1,0 };
 const int dy[] = { 0,1,0,-1 };
@@ -16,14 +16,13 @@ void dfs(int x, int y, int dir){
 	if (map[x][y] == 1) 
 		return;
 
-	// 빈 칸이면 청소한다.
+	// 빈 칸이면 청소
 	if (map[x][y] == 0)	{
 		map[x][y] = 2;
 		cnt++;
 	}
 
 	for (int k = 0; k < 4; k++)	{
-		// 북(0) -> 서(3), 동(1) -> 북(0), 남(2) -> 동(1), 서(3) -> 남(2)
 		int next_dir;
 
 		if (dir - 1 < 0)
@@ -34,7 +33,6 @@ void dfs(int x, int y, int dir){
 		int next_x = x + dx[next_dir];
 		int next_y = y + dy[next_dir];
 
-		
 		if (map[next_x][next_y] == 0)		{
 			dfs(next_x, next_y, next_dir);
 			return;
@@ -42,9 +40,8 @@ void dfs(int x, int y, int dir){
 		else
 			dir = next_dir;
 	}
-	// 검사 끝
 
-	// 네 방향 모두 청소했거나 벽이면 방향을 유지한채로 후진한다.
+	// 모두 청소했거나 벽이면 방향 그대로, 후진
 	int next_x = x + pre_dx[dir], next_y = y + pre_dy[dir];
 
 	dfs(next_x, next_y, dir);
