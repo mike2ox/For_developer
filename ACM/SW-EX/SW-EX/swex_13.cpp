@@ -18,7 +18,7 @@ struct desert {
 int map[21][21];
 bool visit[21][21];
 vector<desert> v;
-
+//11시, 1시, 4시, 7시 방향
 const int dy[] = { -1,-1,1,1 };
 const int dx[] = { -1, 1, 1, -1};
 
@@ -32,75 +32,102 @@ void printall() {
 	}
 }
 void init() {
+	
 	for (int i = 1; i <= n; ++i) {
 		for (int j =1; j <= n; ++j) {
 			map[i][j]=0;
+			visit[i][j] = false;
 		}
 	}
 }
+bool comp(const desert& a, const desert& b) {
+	return a.n_d < b.n_d;	
+}
+
 //리스트에 겹치는게 있느지 없는지
 bool check() {
-	
-	for (vector<desert>::iterator itr = v.begin(); itr != v.end(); ++itr) {
-		
+	for (int i = 0; i < v.size() - 1; i++) {
+		for (int j = 1; j < v.size(); ++j) {
+			if (v[i].n_d == v[j].n_d)
+				return true;
+		}
 	}
 	//겹치는게 없음
 	return false;
 }
-//전체 계산
-int cal(vector<desert>& d) {
-	int ret = 0;
 
-	for (vector<desert>::iterator itr = d.begin(); itr != d.end(); ++itr){}
-	return ret;
-}
 //y, x, 접근한 방향, 꺽은 횟수
-int dfs(int ty, int tx, int pd, int cnt) {
-	//map의 꼭지점
-	if ((ty==1&&tx==1)|| (ty == 1 && tx == n)|| (ty == n && tx == 1)|| (ty == n && tx == n))
-		return -1;
-	if (!check())
-		return -1;
-	//방문 여부 
-	if (visit[ty][tx]) {
-		//출발점과 현재 도착한 위치의 좌표가 같을 경우
-		if (ty == v.front().y && tx == v.front().x ) {
-			return (int)v.size();
+void dfs(int ty, int tx, int pd, int cnt) {
+	//종료조건
+	//4개 꼭지점 + 처음 위치와 동일한 경우
+	if (cnt == 4 && (v.front().x == tx && v.front().y == ty)) {
+		//중복있나 확인
+		n_des = max(n_des, (int)v.size());
+		return;
+	}
+	// 꼭지점에 있는 경우
+	if ((ty == 1 && tx == 1) || (ty == 1 && tx == n) || (ty == n && tx == 1) || (ty == n && tx == n))	return;
+
+	//방문 안한 카페야 접근 가능
+	if (!visit[ty][tx]) {
+
+		visit[ty][tx] = true;
+		for (int i = 0; i < 4; ++i) {
+			int ny = ty + dy[i];
+			int nx = tx + dx[i];
+
+			//범위 밖
+			if (ny<1 || ny>n || nx<1 || nx>n)
+				continue;
+			//
+			if (check()) {
+				n_des = max(n_des, -1);
+				return;
+			}
+
+			//이전에 접근한 방향과 지금 가야할 방향이 같으면 --> 꺾이지 않음
+			if (pd == i) {
+				v.push_back({ ny,nx,map[ny][nx] });
+				dfs(ny, nx, i, cnt);
+				v.pop_back();
+			}
+				
+			else {
+				v.push_back({ ny,nx,map[ny][nx] });
+				dfs(ny, nx, i, cnt + 1);
+				v.pop_back();
+			}
 		}
-		else //방문한 곳이지만 좌표가 다른 경우 --> 교차 / 유턴 이라서 X
-			return -1;
-	}
-	visit[ty][tx] == true;
-	
-	for (int i = 0; i < 4; ++i) {
-		int ny = ty + dy[i];
-		int nx = tx + dx[i];
-
-		n_des = max(n_des, dfs(ny, nx, i, cnt + 1));//더 큰 것으로
 	}
 
-
+	return;
 }
 
 int main() {
 
 	ios_base::sync_with_stdio(false);
-	cin.tie();
+	cin.tie(0);
 
 	cin >> t;
 	for (int tc = 1; tc <= t; ++tc) {
 		cin >> n;
-		n_des = 0;
+		n_des = -2;
+		init();
 		for (int i = 1; i <= n; ++i) {
 			for (int j = 1; j <= n; ++j) {
 				cin >> map[i][j];
 			}
 		}
-
-		n_des = dfs(2, 1, 1,0);
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 1; j <= n; ++j) {
+				v.push_back({ i,j ,map[i][j]});
+				dfs(i,j, 0, 0);
+				v.pop_back();
+			}
+		}
+		
 		cout << "#" << tc << " " << n_des << '\n';
 		//printall();
-		init();
 	}
 
 	system("pause");
