@@ -15,6 +15,7 @@ void bfs() {
 
 	queue<pair<int, int>> q;
 	q.push({ 1,1 });
+	visit[1][1] = true;
 	int q_size = q.size();
 
 	while (!q.empty()) {
@@ -25,7 +26,6 @@ void bfs() {
 
 		int cy = q.front().first;
 		int cx = q.front().second;
-		visit[cy][cx] = true;
 		q.pop();
 		--q_size;
 
@@ -41,6 +41,8 @@ void bfs() {
 				cout << cnt+1 << '\n';
 				return;
 			}
+
+			visit[ny][nx] = true;
 			q.push({ ny,nx });
 		}
 	}
