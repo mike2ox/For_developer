@@ -4,55 +4,36 @@
 using namespace std;
 
 int n, m;
+
 bool visit[51][51];
-char board[51][51];
+char board[51][52];
+int flag = false;
 
-const int dy[] = {0, 0,0,-1,1 };
-const int dx[] = {0, 1,-1,0,0 };
+const int dy[] = {0,0,-1,1 };
+const int dx[] = {1,-1,0,0 };
 
-struct node {
-	int y, x;
-	int dir;
-};
+void dfs(int pY, int pX, int cY, int cX, int cnt) {
+	if (cnt >=4 && visit[cY][cX]) {
+		flag = true;
+		return;
+	}
+	visit[cY][cX] = true;
 
-bool bfs(int y, int x) {
-	queue<node> q;
-	// 초기값
-	q.push({ y, x, 0});
+	for (int d = 0; d < 4; ++d) {
+		int nY = cY + dy[d];
+		int nX = cX + dx[d];
 
-	while (!q.empty()) {
-		node curPoint = q.front();
-		visit[curPoint.y][curPoint.x] = true;
-		q.pop();
+		if (nY<0 || nX<0 || nY>n - 1 || nX>m - 1)
+			continue;
+		if (board[nY][nX] != board[cY][cX])
+			continue;
+		if (nY == pY && nX == pX)
+			continue;
 
-		for (int d = 1; d <= 4; ++d) {
-			int cy = curPoint.y + dy[d];
-			int cx = curPoint.x + dx[d];
-
-			//out boundary
-			if (cy<0 || cx<0 || cy>n - 1 || cx>m - 1)
-				continue;
-
-			//이전 자리로 가는거 방지
-			if (curPoint.dir == 1 && d == 2)
-				continue;
-			else if (curPoint.dir == 2 && d == 1)
-				continue;
-			else if (curPoint.dir == 3 && d == 4)
-				continue;
-			else if (curPoint.dir == 4 && d == 3)
-				continue;
-
-			//문자 불일치 -> 방문했던 곳(종료) -> 다시 탐색
-			if (board[cy][cx] != board[y][x])
-				continue;
-			else if (visit[cy][cx])
-				return true;
-			else {
-				q.push({ cy, cx,d });
-			}
-		}
-
+		// 범위안이고 문자가 같고 이전 위치로 안가는 경우
+		dfs(cY, cX, nY, nX, cnt+1);
+		if (flag)
+			return;
 	}
 }
 
@@ -68,17 +49,16 @@ int main() {
 	
 	for (int y = 0; y < n; ++y) {
 		for (int x = 0; x < m; ++x) {
-			if (!visit[y][x]) {
-				// 탐색하지 않은 곳
-				if (bfs(y, x)) {
-					cout << "Yes" << '\n';
-					return 0;
-				}
+			if (!visit[y][x])
+				dfs(y, x, y, x,0);
+			if (flag) {	//하나라도 cycle있을시 종료
+				cout << "Yes\n";
+				return 0;
 			}
 		}
 	}
 
-	cout << "No" << '\n';
+	cout << "No\n";
 	return 0;
 
 }
