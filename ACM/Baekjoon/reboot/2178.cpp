@@ -1,35 +1,49 @@
 // BOJ no. 2178, mike2ox(2020)
-// using DFS algorithm
+// using bfs algorithm
 #include<iostream>
+#include<queue>
 using namespace std;
 
 int n, m;
-int cnt=1000000;
-char maze[101][101];
+int cnt=1;
+char maze[103][102];
 bool visit[101][101];
-const int dy[] = { 0,0,-1,1 };
-const int dx[] = { 1,-1,0,0 };
 
-void dfs(int y, int x, int nowCnt) {
-	if (y == n - 1 && x == m - 1) {
-		if(cnt > nowCnt)
-			cnt = nowCnt;
-		return;
+void bfs() {
+	const int dy[] = { 0,0,-1,1 };
+	const int dx[] = { 1,-1,0,0 };
+
+	queue<pair<int, int>> q;
+	q.push({ 1,1 });
+	int q_size = q.size();
+
+	while (!q.empty()) {
+		if (q_size<1) {
+			q_size = q.size();
+			cnt++;
+		}
+
+		int cy = q.front().first;
+		int cx = q.front().second;
+		visit[cy][cx] = true;
+		q.pop();
+		--q_size;
+
+		for (int d = 0; d < 4; ++d) {
+			int ny = cy + dy[d];
+			int nx = cx + dx[d];
+
+			if (ny<1 || nx<1 || ny>n || nx>m)
+				continue;
+			if (visit[ny][nx]||maze[ny][nx]=='0')
+				continue;
+			if (ny == n && nx == m) {
+				cout << cnt+1 << '\n';
+				return;
+			}
+			q.push({ ny,nx });
+		}
 	}
-	visit[y][x] = true;
-
-	for (int d = 0; d < 4; ++d) {
-		int ny = y + dy[d];
-		int nx = x + dx[d];
-
-		if (ny<0 || nx<0 || ny>n || nx>m)
-			continue;
-		if (visit[ny][nx] || maze[ny][nx] != '1')
-			continue;
-
-		dfs(ny, nx, nowCnt + 1);
-	}
-	visit[y][x] = false;
 }
 
 int main() {
@@ -38,15 +52,13 @@ int main() {
 
 	cin >> n >> m;
 
-	for (int y = 0; y < n; ++y) {
-		for (int x = 0; x < m; ++x) {
+	for (int y = 1; y <= n; ++y) {
+		for (int x = 1; x <= m; ++x) {
 			cin >> maze[y][x];
 		}
 	}
 
-	dfs(0, 0, 1);
+	bfs();
 
-	cout << cnt << '\n';
-	system("pause");
 	return 0;
 }
