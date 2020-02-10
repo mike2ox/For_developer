@@ -5,48 +5,89 @@
 using namespace std;
 
 int k;
-double maximum;
-double minimum = 1000000000;
-string strmax, strmin;
-
+char minimum[11];
+char maximum[11];
+double ret;
+bool flag;
+char inequaliy[10];	//부등호 정보
 bool visit[10];	//사용했는지 안했는지 확인
 vector<int> values;	// 부등호 성립시 숫자를 입력되는 저장소
-char inequaliy[9];	//부등호 정보
 
-void dfs(int cnt) {
-	if (cnt == k +1) {
-		int tempValue=0;
+void maxdfs(int pre, int cnt) {
+	if (cnt > k) {
+		ret = 0;
+		int tens = 0;
+		for (int i = 0; i < values.size(); ++i) {
+			ret *= 10;
+			ret += values[i];
+			tens++;
+		}
+
+		for (int i = 0; i < values.size(); ++i)
+			cout << values[i];
 		
-		for (int i = 0; i < values.size() ; ++i) {
-			tempValue += values[i];
-			
-		}
-		//비교 저장
-		if (tempValue > maximum) {
-			maximum = tempValue;
-		}
-		if (tempValue < minimum) {
-			minimum = tempValue;
-		}
-		
+		flag = true;
 		return;
 	}
 
-	for (int j = 0; j < 9; ++j) {
-		if (!visit[j]) {
-			if ((inequaliy[cnt - 1] == '<' && values.back() < j) ||
-				(inequaliy[cnt - 1] == '>' && values.back() > j)) {
-				visit[j] = true;
-				values.push_back(j);
-				dfs(cnt + 1);
-				values.pop_back();
-				visit[j] = false;
-			}
-			else
-				continue;
-		}
-		else
+	for (int i = 9; i >=0; --i) {
+		if (visit[i]||flag)	//사용한 곳 제외
 			continue;
+		if (inequaliy[cnt-1] == '<' && pre < i) {
+			visit[i] = true;
+			values.push_back(i);
+			maxdfs(i, cnt + 1);
+			visit[i] = false;
+			values.pop_back();
+		}
+		else if (inequaliy[cnt-1] == '>' && pre > i) {
+			visit[i] = true;
+			values.push_back(i);
+			maxdfs(i, cnt + 1);
+			visit[i] = false;
+			values.pop_back();
+		}
+		else {
+			//cout << "check input data...\n";
+		}
+	}
+
+}
+void mindfs(int pre, int cnt) {
+	if (cnt > k) {
+		ret = 0;
+		for (int i = 0; i < values.size(); ++i) {
+			ret *= 10;
+			ret += values[i];
+		}
+
+		for (int i = 0; i < values.size(); ++i)
+			cout << values[i];
+
+		flag = true;
+		return;
+	}
+
+	for (int i = 0; i <= 9; ++i) {
+		if (visit[i]||flag)	//사용한 곳 제외
+			continue;
+		if (inequaliy[cnt-1] == '<'&&pre < i) {
+			visit[i] = true;
+			values.push_back(i);
+			mindfs(i, cnt + 1);
+			visit[i] = false;
+			values.pop_back();
+		}
+		else if(inequaliy[cnt-1] == '>'&&pre>i) {
+			visit[i] = true;
+			values.push_back(i);
+			mindfs(i, cnt + 1);
+			visit[i] = false;
+			values.pop_back();
+		}
+		else {
+			//cout << "check input data...\n";
+		}
 	}
 
 }
@@ -60,16 +101,24 @@ int main() {
 	for (int i = 0; i < k; ++i)
 		cin >> inequaliy[i];
 
-	for (int j = 0; j <= k; ++j) {
+	for (int j = 9; j >= 0; --j) {
 		visit[j] = true;
 		values.push_back(j);
-		dfs(1);
+		maxdfs(j, 1);
+		values.pop_back();
+		visit[j] = false;
+	}
+	flag = false;
+	cout << '\n';
+
+	for (int j = 0; j <= 9; ++j) {
+		visit[j] = true;
+		values.push_back(j);
+		mindfs(j, 1);
 		values.pop_back();
 		visit[j] = false;
 	}
 
-
-	cout << strmax << '\n' << strmin << '\n';
-
+	cout << '\n';
 	return 0;
 }
