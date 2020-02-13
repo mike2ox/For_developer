@@ -4,71 +4,87 @@
 #include<queue>
 using namespace std;
 
-int n, point;
-vector<int> subway[3001];
-vector<int> route;
-bool visit[3001];
+int n;
 bool flag;
-struct node{
-	int preStation, station;
-	vector<int> v;
-};
+bool visit[3001];
+int dist[3001];
+vector<int> subway[3001];
+vector<int> xStation;
 
-void dfs(node info) {
-	if (visit[info.station]) {
-		point = info.station;
-		route.clear();
-		
-		for (int i = 0; i < info.v.size(); ++i) {
-			if (info.v[i] == point) {
-				for (int j = i; j < info.v.size() - 1; ++j)
-					route.push_back(info.v[j]);
-			}
-		}
-
-		flag = true;	//순환 방지
+// 순환선 찾기
+void dfs(int curV, int preV) {
+	if (visit[curV]) {
+		flag = true;
+		xStation.push_back(curV);
 		return;
 	}
-
-	visit[info.station] = true;
-	// preStation = station;
-
-	for (int i = 0; i < subway[info.station].size(); ++i) {
-		int nextStation = subway[info.station][i];
-
-		if (nextStation == info.preStation)
+	visit[curV] = true;
+	for (auto au : subway[curV]) {
+		if (au== preV)
 			continue;
-		if (flag)
+
+		dfs(au, curV);
+
+		if (flag) {
+			if (curV == xStation.front()) {
+				flag = false;
+				return;
+			}
+			xStation.push_back(curV);
 			return;
-		info.v.push_back(nextStation);
-		dfs({ info.station, nextStation, info.v});
+		} 
 	}
+	visit[curV] = false;
 }
-void dfs2() {
-	// route : 싸이클
-	// point : 교착점
+void bfs() {
+	queue<int> q;
+	int cnt = 0;
+
+	for (auto au : xStation) {
+		q.push(au);
+	}
 	
+	int qSize = q.size();
+
+	while (!q.empty()) {
+		if (qSize == 0) {
+			qSize = q.size();
+			++cnt;
+		}
+
+		int curV = q.front();
+		visit[curV] = true;
+		dist[curV] = cnt;
+		q.pop();
+		--qSize;
+		
+		for (auto au2 : subway[curV]) {
+			//방문한 곳 제외
+			if (visit[au2])
+				continue;
+			q.push(au2);
+		}
+
+	}
+
 }
 int main() {
 	ios_base::sync_with_stdio(false);
 	cout.tie(0);
 
 	cin >> n;
-	
-	for (int i = 0; i < n; ++i) {
-		int startV, endV;
-		cin >> startV >> endV;
-
-		subway[startV].push_back(endV);
-		subway[endV].push_back(startV);
+	for (int i = 1; i <= n; ++i) {
+		int preVertex, postVertex;
+		cin >> preVertex >> postVertex;
+		subway[preVertex].push_back(postVertex);
+		subway[postVertex].push_back(preVertex);
 	}
-	route.push_back(1);
-	dfs({ 1,1,route});
-	// 초기화
-	for (int i = 0; i < n; ++i)
-		visit[i] = false;
 
-	dfs2();
-
+	dfs(1, 1);
+	bfs();
+	for (int i = 1; i <= n; ++i) {
+		cout << dist[i] << " ";
+	}
+	
 	return 0;
 }
