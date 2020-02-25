@@ -9,23 +9,20 @@ string m,pn="I";
 void checkS() {
 	int ret = 0;
 
-	for (int i = 0; i < m.size() - pn.size(); ++i) {
+	for (int i = 0; i < m.size()-n*2; ++i) {
 		if (m[i] == 'I') {
-			bool flag = false;
-			int nCnt = n;
+			int cCnt = n;
+			for (int j = i; j < m.size(); j += 2) {
+				i = j;
 
-			for (int j = i + 1; j <= m.size() - pn.size(); j += 2) {
-				if (m[j] == 'O' && m[j + 1] == 'I') {
-					--nCnt;
+				if (m[j + 1] == 'O' && m[j + 2] == 'I') {
+					cCnt--;
 				}
-				else {
+				else
 					break;
-				}
-				if (nCnt == 0)
-					flag = true;
-				if (flag) {
+
+				if (cCnt <= 0) {
 					ret++;
-					i = j;
 				}
 			}
 		}
