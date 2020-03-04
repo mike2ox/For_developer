@@ -1,4 +1,5 @@
 // BJO no. 6603 로또 , mike2ox(2020)
+// 메모이제이션 X, 백트래킹(DFS)를 활용
 #include<iostream>
 #include<vector>
 using namespace std;
