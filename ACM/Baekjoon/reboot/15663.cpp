@@ -1,53 +1,74 @@
 // BJO no. 15663, mike2ox(2020)
 #include<iostream>
+#include<vector>
+#include<string>
 #include<algorithm>
 using namespace std;
 
 int n, m;
-int dataInput[9];
-int dataOutput[9];
-int visit[10001];
-
-void go(int idx, int cnt) {
+int arr[8];
+vector<int> v;
+vector<int> v3;
+vector<string> v2;
+bool visit[10001];
+void go(int result, int cnt) {
 	if (cnt == m) {
-		for (int j = 0; j < m; ++j)
-			cout << dataOutput[j] << ' ';
-		cout << '\n';
+		string str = "";
+		for (auto au : v3) {
+			str += to_string(au);
+			str += " ";
+		}
+		v2.push_back(str);
 		return;
 	}
-	for (int j = idx; j < n; ++j) {
-		if (dataOutput[cnt] <= dataInput[j]&&
-			visit[dataInput[j]]>0) {
-		
-			dataOutput[cnt] = dataInput[j];
-			--visit[dataInput[j]];
-			go(j, cnt + 1);
-			++visit[dataInput[j]];
-			dataOutput[cnt] = 0;
-		}
+
+	for (int i = 0; i < n; ++i) {
+		if (visit[i])
+			continue;
+		visit[i] = true;
+		v3.push_back(v[i]);
+		go(result*10 + v[i], cnt+1);
+		v3.pop_back();
+		visit[i] = false;
 	}
+
 }
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
+	int inputData;
 
 	cin >> n >> m;
+
 	for (int i = 0; i < n; ++i) {
-		cin >> dataInput[i];
-		visit[dataInput[i]]++;
+		cin >> inputData;
+		v.push_back(inputData);
 	}
-
-	sort(dataInput, dataInput + n);
+	sort(v.begin(), v.end());
 
 	for (int i = 0; i < n; ++i) {
-		if (visit[dataInput[i]]==0)
-			continue;
-		--visit[dataInput[i]];
-		dataOutput[0] = dataInput[i];
-		go(i,1);
-		dataOutput[0] = dataInput[i];
-		++visit[dataInput[i]];
+		visit[i] = true;
+		v3.push_back(v[i]);
+		go(v[i],1);
+		v3.pop_back();
+		visit[i] = false;
+	}
+	sort(v2.begin(), v2.end());
+	int v2Size = v2.size();
+
+	for (int i = 0; i < v2Size; ++i) {
+		if (i + 1 != v2Size) {
+			if (v2[i] == v2[i + 1]) {
+				continue;
+			}
+			else {
+				cout << v2[i] << '\n';
+			}
+		}
+		else {
+			cout << v2[i] << '\n';
+		}
 	}
 
 	return 0;
