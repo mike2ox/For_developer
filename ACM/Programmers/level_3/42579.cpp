@@ -13,12 +13,9 @@ bool compare(pair<string, int> pre, pair<string, int> next)
 
 bool compare2(pair<int, int> pre, pair<int, int> next)
 {
-	if (pre.first > next.first)
-		return true;
-	else if (pre.first == next.first && pre.second < next.second)
-		return true;
-	else
-		return false;
+	if (pre.first == next.first)
+		return pre.second < next.second;
+	return pre.first > next.first;
 }
 
 vector<int> solution(vector<string> genres, vector<int> plays)
