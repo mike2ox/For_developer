@@ -1,65 +1,71 @@
-// BJO no. 10971, mike2ox(2020)
-#include<iostream>
-#include<vector>
+// BJO no.10971 mike2ox(2020)
+// ì™¸íŒì› ìˆœíšŒ2
+// ì™„íƒ(dfs)
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <limits.h>
+#include <stack>
 using namespace std;
 
+vector<vector<int>> tsp;
+vector<bool> visit;
 int n;
-vector<int> v;
-int costW[11][11];
-bool visit[11];
-int costMin = 1000001;
-// ÃÖÃÊ ½ÃÀÛÁ¡, ¹Ù·ÎÁ÷Àü À§Ä¡, ÇöÀç À§Ä¡, ÇöÀçÀ§Ä¡±îÁöÀÇ ºñ¿ë
-void dfs(int start, int pre, int cur,int curSum) {
-	if (v.size() == n) {
-		if (costW[cur][start] == 0)
-			return;
-		else if (costMin > curSum+costW[cur][start]) {
-			costMin = curSum + costW[cur][start];
-			/* cout << "#" << costMin << " : ";
-			for (auto au : v)
-				cout << au << ' ';
-			cout << '\n';*/
-		}
+int answer = INT_MAX;
+
+// O(n!)
+void go(int start, int pre_idx, int cnt, int cost)
+{
+	if (cnt == visit.size())
+	{
+		if (tsp[pre_idx][start] > 0 && cost + tsp[pre_idx][start] < answer)
+			answer = cost + tsp[pre_idx][start];
 		return;
 	}
-	for (int i = 1; i <= n; ++i) {
-		if (visit[i]||costW[cur][i]==0)
-			continue;
-		if (curSum > costMin)
-			continue;
-		visit[i] = true;
-		v.push_back(i);
-		dfs(start, cur, i, curSum + costW[cur][i]);
-		v.pop_back();
-		visit[i] = false;
-	}
 
+	for (int next_idx = 0; next_idx < n; ++next_idx)
+	{
+		if (visit[next_idx])
+			continue;
+		if (tsp[pre_idx][next_idx] == 0)
+			continue;
+		visit[next_idx] = true;
+		go(start, next_idx, cnt + 1, cost + tsp[pre_idx][next_idx]);
+		visit[next_idx] = false;
+	}
 }
-int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
-	cin >> n;
-	for (int i = 1; i <= n; ++i) {
-		for (int j = 1; j <= n; ++j) {
-			cin >> costW[i][j];
-		}
-	}
 
-	for (int i = 1; i <= n; ++i) {
+int solution(int n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		// init visit container
+		visit.clear();
+		visit.resize(n, false);
+
 		visit[i] = true;
-		v.push_back(i);
-		for (int j = 1; j <= n; ++j) {
-			if (visit[j]||costW[i][j]==0)
-				continue;
-			visit[j] = true;
-			v.push_back(j);
-			dfs(i, i,j, costW[i][j]);
-			v.pop_back();
-			visit[j] = false;
-		}
-		v.pop_back();
+		go(i, i, 1, 0);	// ìµœì´ˆ ì‹œì‘ ë„ì‹œ, ì´ì „ ì¶œë°œ ë„ì‹œ, ì§€ë‚˜ì˜¨ ë„ì‹œìˆ˜, ëˆ„ì cost
 		visit[i] = false;
 	}
-	cout << costMin << '\n';
+
+	return answer;
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cout.tie(NULL);
+
+	cin >> n;
+	tsp.resize(n, vector<int>(n, 0));
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+			cin >> tsp[i][j];
+	}
+
+	//cout << solution(tsp, n);
+	cout << solution(n);
 	return 0;
 }
