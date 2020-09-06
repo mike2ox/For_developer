@@ -1,71 +1,90 @@
-// BJO no.10971 mike2ox(2020)
-// 외판원 순회
-// 완탐(50분) -> dp 적용해야함
+// BJO no.15658 mike2ox(2020)
+// 연산자 끼워넣기 2
 #include <string>
 #include <vector>
 #include <iostream>
 #include <algorithm>
 #include <limits.h>
-#include <stack>
+#include <unordered_set>
 using namespace std;
 
-vector<vector<int>> tsp;
-vector<bool> visit;
-int n;
-int answer = INT_MAX;
+vector<int> solution(vector<int> numbers, vector<int> cnt_operator, int n) {
+	vector<int> answer = {INT_MIN, INT_MAX };	//최대값, 최소값
+	string operators = "";
+	unordered_set<string> all_case_op;
 
-// 완탐(dfs) O(n!) -> dp로 바꿔야함
-void go(int start, int pre_idx, int cnt, int cost)
-{
-	if (cnt == visit.size())
-	{
-		if (tsp[pre_idx][start] > 0 && cost + tsp[pre_idx][start] < answer)
-			answer = cost + tsp[pre_idx][start];
-		return;
+	for (int i = 0; i < 4; i++) {
+		while (cnt_operator[i]) {
+			if (i == 0) operators += '+';
+			else if (i == 1) operators += '-';
+			else if (i == 2) operators += '*';
+			else operators += '/';
+			cnt_operator[i]--;
+		}
+	}
+	vector<int> check(operators.length(), 0);
+	for (int i = 0; i < n - 1; i++)
+		check[i] = 1;
+
+	while (true) {
+		string case_op = "";
+		for (int i = 0; i < check.size(); i++) {
+			if (check[i])
+				case_op += operators[i];
+			if (case_op.size() == n - 1)
+				break;
+		}
+		all_case_op.insert(case_op);
+		if (!next_permutation(check.rbegin(), check.rend()))
+			break;
 	}
 
-	for (int next_idx = 0; next_idx < n; ++next_idx)
-	{
-		if (visit[next_idx])
-			continue;
-		if (tsp[pre_idx][next_idx] == 0)
-			continue;
-		visit[next_idx] = true;
-		go(start, next_idx, cnt + 1, cost + tsp[pre_idx][next_idx]);
-		visit[next_idx] = false;
-	}
-}
+	for (string ops : all_case_op) {
+		sort(ops.begin(), ops.end());
 
-int solution(int n)
-{
-	for (int i = 0; i < n; ++i)
-	{
-		visit.clear();
-		visit.resize(n, false);
+		while (true) {
+			string tmp = ops;
+			int ret = numbers.front();
+			for (int i = 1; i < numbers.size() ; i++) {
+				if (tmp[i - 1] == '+') ret += numbers[i];
+				else if (tmp[i - 1] == '-') ret -= numbers[i];
+				else if (tmp[i - 1] == '*') ret *= numbers[i];
+				else ret /= numbers[i];
+			}
 
-		visit[i] = true;
-		go(i, i, 1, 0);
-		visit[i] = false;
+			if (answer[0] < ret)
+				answer[0] = ret;
+
+			if (answer[1] > ret)
+				answer[1] = ret;
+
+			if (!next_permutation(ops.begin(), ops.end()))
+				break;
+		}
 	}
 
 	return answer;
 }
 
-int main()
-{
+int main() {
 	ios_base::sync_with_stdio(false);
 	cout.tie(NULL);
 
+	int n;
 	cin >> n;
-	tsp.resize(n, vector<int>(n, 0));
+	vector<int> numbers(n, 0);
+	vector<int> cnt_operator(4, 0);
 
 	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-			cin >> tsp[i][j];
-	}
+		cin >> numbers[i];
 
-	// n <= 10이라서 완탐이 가능
-	cout << solution(n);
+	for (int i = 0; i < 4; i++)
+		cin >> cnt_operator[i];
+
+	vector<int> answers = solution(numbers, cnt_operator, n);
+
+	for (int answer : answers)
+		cout << answer << '\n';
+
 	return 0;
 }
