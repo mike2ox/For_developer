@@ -1,108 +1,84 @@
 // BJO no. 3085 mike2ox(2020)
-#include<iostream>
-#include<queue>
+// ÏÇ¨ÌÉï Í≤åÏûÑ
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
 using namespace std;
 
 int n;
-char board[50][51];	//c, p, z, y
-const int dy[] = { 0,-1,0,1 };
-const int dx[] = { 1,0,-1,0 };
-int maximum = 0;
-void swap(int starty, int startx, int ny, int nx) {
-	char temp = board[starty][startx];
-	board[starty][startx] = board[ny][nx];
-	board[ny][nx]=temp;
-}
-void go2(int starty, int startx, int ny, int nx) {
-	// swap
-	swap(starty, startx, ny, nx);
-	int vertical = 1; int horizontal = 1;
 
-	for (int d = 0; d < 4; ++d) {
-		int ctnY = starty + dy[d];
-		int ctnX = startx + dx[d];
+unsigned int cnt_max_candy;
 
-		while (board[ctnY][ctnX] == board[starty][startx]) {
-			ctnY += dy[d]; ctnX += dx[d];
-			if (d / 2 == 0)	++horizontal;
-			else ++vertical;
+// Ïä§ÏôëÏïàÌïú ÎùºÏù∏ Ï§ëÏóê Îçî Í∏¥ÎùºÏù∏Ïù¥ ÏûàÏùÑ Ïàò ÏûàÏùå -> ÏôÑÌÉê
+void check(vector<vector<char>> bomboni) {
+	vector<vector<int>> col_cnt(n, vector<int>(n, 0));
+	vector<vector<int>> row_cnt(n, vector<int>(n, 0));
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (j == 0 || bomboni[i][j - 1] != bomboni[i][j])
+				col_cnt[i][j] = 1;
+			else if (bomboni[i][j - 1] == bomboni[i][j])
+				col_cnt[i][j] = col_cnt[i][j - 1] + 1;
 		}
-
-		if (horizontal > maximum)
-			maximum = horizontal;
-		if (vertical > maximum)
-			maximum = vertical;
 	}
-	/*
-	for (int d = 0; d < 4; ++d) {
-		int ctnY1 = starty + dy[d];
-		int ctnY2 = ny + dy[d];
-		int ctnX1 = startx + dx[d];
-		int ctnX2 = nx + dx[d];
-		int length = 0;
 
-		if (ctnY1 < 0 || ctnY2<0 || ctnY1>n - 1 || ctnY2 >n - 1
-			|| ctnX1 < 0 || ctnX2<0 || ctnX1>n - 1 || ctnX2 >n - 1)
-			continue;
-
-		while (board[ctnY1][ctnX1] == board[starty][startx]) {
-			ctnY1 += dy[d]; ctnX1 += dx[d];
-			++length;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (i == 0 || bomboni[i - 1][j] != bomboni[i][j])
+				row_cnt[i][j] = 1;
+			else if (bomboni[i - 1][j] == bomboni[i][j])
+				row_cnt[i][j] = row_cnt[i - 1][j] + 1;
 		}
-
-		if (maximum < length+1)
-			maximum = length+1;
-		length = 0;
-
-		while (board[ctnY2][ctnX2] == board[ny][nx]) {
-			ctnY2 += dy[d]; ctnX2 += dx[d];
-			++length;
-		}
-
-		if (maximum < length+1)
-			maximum = length+1;
-		length = 0;
-	}*/
-
-	// swap
-	swap(starty, startx, ny, nx);
-}
-void go(int y, int x) {
-	for (int d = 0; d < 4; ++d) {
-		int ny = y + dy[d];
-		int nx = x + dx[d];
-
-		if (ny < 0 || nx<0 || nx>n - 1 || ny>n - 1)
-			continue;
-		if (board[ny][nx] == board[y][x])
-			continue;
-
-		go2(y, x, ny, nx);
 	}
+
+	int max_value = 0;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (col_cnt[i][j] > max_value)
+				max_value = col_cnt[i][j];
+			if (row_cnt[i][j] > max_value)
+				max_value = row_cnt[i][j];
+		}
+	}
+
+	if (max_value > cnt_max_candy)
+		cnt_max_candy = max_value;
 }
 
 int main() {
 	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	cout.tie(NULL);
 
 	cin >> n;
 
-	for (int i = 0; i < n; ++i) {
-		for (int j = 0; j < n; ++j) {
-			cin >> board[i][j];
+	vector<vector<char>> bomboni(n, vector<char>(n));
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+			cin >> bomboni[i][j];
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (j + 1 < n) {
+				swap(bomboni[i][j], bomboni[i][j + 1]);
+				check(bomboni);
+				swap(bomboni[i][j], bomboni[i][j + 1]);
+			}
+
+			if (i + 1 < n) {
+				swap(bomboni[i][j], bomboni[i + 1][j]);
+				check(bomboni);
+				swap(bomboni[i][j], bomboni[i + 1][j]);
+			}
 		}
 	}
 
-	// º±≈√
-	for (int i = 0; i < n; ++i) {
-		for (int j = 0; j < n; ++j) {
-			go(i, j);
-		}
-	}
-
-	cout << maximum << '\n';
-	// ªÛ«œ¡¬øÏ ∫Ø»Ø
-	// ∞™ √ﬂªÍ
+	cout << cnt_max_candy << '\n';
 
 	return 0;
 }
