@@ -41,10 +41,12 @@ int main()
 				{
 					if (((r - i + c - j) & 1) && start == chess[r][c])
 						cnt_paint++;
-					if (((r - i + c - j) & 0) && start != chess[r][c])
+					if (!((r - i + c - j) & 1) && start != chess[r][c])
 						cnt_paint++;
 				}
 			}
+
+			// 2가치 경우(W시작, B시작)에서 칠하는 횟수 비교
 			if (cnt_paint > 64 - cnt_paint)
 				cnt_paint = 64 - cnt_paint;
 			if (cnt_paint < min_paint)
