@@ -1,4 +1,5 @@
-// 연구소 3(70m / non-clear)
+// 연구소 3(90m)
+// BFS + 시뮬레이션
 #include <iostream>
 #include <vector>
 #include <string>
@@ -11,13 +12,15 @@ using namespace std;
 
 int n, m;
 
-enum CONTENTS {
+enum CONTENTS
+{
 	EMPTY_ROOM,
 	WALL,
 	VIRUS
 };
 
-struct virus_info {
+struct virus_info
+{
 	int y;
 	int x;
 	int time;
@@ -30,7 +33,8 @@ vector<vector<int>> candi_lab;
 vector<vector<bool>> visit;
 vector<virus_info> viruses;
 
-int bfs(vector<int> &comb) {
+int bfs(vector<int> &comb)
+{
 	queue<virus_info> q;
 	int ret = 0;
 	visit.clear();
@@ -38,47 +42,55 @@ int bfs(vector<int> &comb) {
 	candi_lab.resize(n, vector<int>(n, -1));
 	visit.resize(n, vector<bool>(n));
 
-	const int dy[] = { 0, 0, -1, 1 };
-	const int dx[] = { 1 ,-1, 0 ,0 };
+	const int dy[] = {0, 0, -1, 1};
+	const int dx[] = {1, -1, 0, 0};
 
-	for (int i = 0; i < comb.size(); i++) {
+	for (int i = 0; i < comb.size(); i++)
+	{
 		if (comb[i])
 			q.push(viruses[i]);
 		else
-			candi_lab[viruses[i].y][viruses[i].x] = -2;		//비활성화 바이러스 위치
+			candi_lab[viruses[i].y][viruses[i].x] = -2; //비활성화 바이러스 위치
 	}
 
-	while (!q.empty()) {
+	while (!q.empty())
+	{
 		virus_info qf = q.front();
 		q.pop();
 
-		if (visit[qf.y][qf.x]) continue;
-		if (qf.time >= min_time) return INT_MAX;
-		if (candi_lab[qf.y][qf.x]m  )
+		if (visit[qf.y][qf.x])
+			continue;
 		candi_lab[qf.y][qf.x] = qf.time;
 		visit[qf.y][qf.x] = true;
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++)
+		{
 			int ny = qf.y + dy[i];
 			int nx = qf.x + dx[i];
 
-			if (ny < 0 || nx < 0 || ny >= n || nx >= n) continue;
-			if (visit[ny][nx]) continue;
-			if (lab[ny][nx] == 1) continue;
+			if (ny < 0 || nx < 0 || ny >= n || nx >= n)
+				continue;
+			if (visit[ny][nx])
+				continue;
+			if (lab[ny][nx] == 1)
+				continue;
 
-			q.push({ ny, nx, qf.time + 1 });
+			q.push({ny, nx, qf.time + 1});
 		}
 	}
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (candi_lab[i][j] == -1) {
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (candi_lab[i][j] == -1)
+			{
 				if (lab[i][j] != WALL)
 					return -1;
 				else
 					continue;
 			}
-			if (candi_lab[i][j] > ret)
+			if (candi_lab[i][j] > ret && lab[i][j] != VIRUS)
 				ret = candi_lab[i][j];
 		}
 	}
@@ -86,7 +98,8 @@ int bfs(vector<int> &comb) {
 	return ret;
 }
 
-int main() {
+int main()
+{
 
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -95,21 +108,25 @@ int main() {
 
 	lab.resize(n, vector<int>(n, 0));
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
 			cin >> lab[i][j];
 			if (lab[i][j] == VIRUS)
-				viruses.push_back({ i, j, 0});
+				viruses.push_back({i, j, 0});
 		}
 	}
 
-	vector<int> comb(viruses.size() ,0);
+	vector<int> comb(viruses.size(), 0);
 	for (int i = 0; i < m; i++)
 		comb[i] = 1;
 
-	do {
+	do
+	{
 		int candi_time = bfs(comb);
-		if (candi_time == -1) continue;
+		if (candi_time == -1)
+			continue;
 		else if (candi_time < min_time)
 			min_time = candi_time;
 
