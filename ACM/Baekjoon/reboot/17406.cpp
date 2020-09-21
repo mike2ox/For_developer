@@ -33,7 +33,7 @@ int solution(vector<vector<int>> arr, vector<rot> rotates) {
 	vector<vector<int>> candi = arr;
 
 	for (auto rot_info : rotates) {
-		for (int s = rot_info.s; s > 0; s /= 2) {
+		for (int s = rot_info.s; s > 0; s--) {
 			// 상단
 			for (int i = rot_info.c - s; i <= rot_info.c + s; i++) {
 				if (i == rot_info.c + s)
@@ -100,7 +100,7 @@ int main() {
 
 	// 순서 선정 위한 배열
 	vector<int> order(k, 0);
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < k; i++)
 		order[i] = i;
 
 	int answer = INT_MAX;
